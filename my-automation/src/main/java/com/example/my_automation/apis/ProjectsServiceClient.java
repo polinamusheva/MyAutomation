@@ -1,6 +1,6 @@
 package com.example.my_automation.apis;
 
-import com.example.my_automation.builder.DiscoverySearchBuilder;
+import com.example.my_automation.builder.RequestBuilder;
 import com.example.my_automation.dto.BaseRequestDto;
 import com.example.my_automation.dto.SearchDTO;
 import com.example.my_automation.dto.SearchRequestDTO;
@@ -137,7 +137,7 @@ public class ProjectsServiceClient extends MyAppApiClient {
                 SearchDTO foundSearch = null;
                 Status status = null;
                 try {
-                    BaseRequestDto dto = DiscoverySearchBuilder.createSearchActorsDTO(List.of(discoverySearchId), 1);
+                    BaseRequestDto dto = RequestBuilder.createSearchProjectDTO(List.of(discoverySearchId), 1);
                     JsonNode recentSearches = getRecentSearch(dto).getBody().as(JsonNode.class);
                     if (recentSearches != null) {
                         JsonNode searchDtos = recentSearches.get("entities");
