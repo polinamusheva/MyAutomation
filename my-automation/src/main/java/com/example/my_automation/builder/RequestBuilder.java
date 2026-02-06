@@ -1,12 +1,9 @@
 package com.example.my_automation.builder;
 
-
-
 import com.example.my_automation.dto.BaseRequestDto;
 
 import java.util.Collections;
 import java.util.List;
-
 
 public class RequestBuilder {
 

@@ -1,0 +1,6 @@
+{
+  "createProject": true,
+  "getProject": true,
+  "updateProject": true,
+  "deleteProject": true
+}

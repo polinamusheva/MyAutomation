@@ -1,6 +1,6 @@
 package com.example.my_automation.auth;
 
-import com.example.my_automation.apis.AuthenticationServiceClient;
+import com.example.my_automation.clients.AuthenticationServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

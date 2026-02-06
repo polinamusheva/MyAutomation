@@ -1,3 +1,62 @@
+server:
+  servlet:
+    session:
+      timeout: 10m
 spring:
   application:
     name: my-automation
+
+  config:
+    import: 'consul:'
+
+  cloud:
+    config:
+      import-check:
+        enabled: false
+    consul:
+      enabled: true
+      host: ${consul_host:localhost}
+      port: 8500
+      config:
+        enabled: true
+        prefixes: config
+        default-context: projects
+
+  liquibase:
+    enabled: false
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+# Encryption key
+encrypt:
+  key: My.Pass1
+
+# Proxy values (Can't be retrieved from Consul)
+loginIP: localhost
+loginPort: 80
+loginBasePath: /api/projects/auth
+proxyBasePath: /prox
+
+# Hibernate Dialect and Logging
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          context:
+            properties: DEBUG
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql:
+                BasicBinder: TRACE
+        springframework: DEBUG
+
+

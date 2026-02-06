@@ -1,4 +1,4 @@
-package com.example.my_automation.apis;
+package com.example.my_automation.clients;
 
 
 import com.example.my_automation.auth.Authentication;
@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.baseURI;
 
+@Primary
 @Component
 public class MyAppApiClient {
 
@@ -35,6 +37,7 @@ public class MyAppApiClient {
 		baseURI = consulProperties.getApiUrl();
 	}
 
+	//TODO: refactor this method to be more efficient and less error prone. Maybe we can use AOP for this.
 	protected String getAuthToken() {
 
 		Authentication auth = null;

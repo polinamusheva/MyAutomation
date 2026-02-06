@@ -65,6 +65,16 @@ public final class Constants {
         public static final String SORT = "sort";
         public static final String NAME = "name";
         public static final String DESCRIPTION = "description";
+        public static final String PROJECT_ID = "projectId";
+        public static final String PROJECT_NAME = "project-name";
+        public static final String TEMP_PROJECTS = "temp_projects";
+        public static final String RELATIONS = "relations";
+        public static final String CLOSED = "closed";
+        //archive
+        public static final String ARCHIVE = "archive";
+        public static final String REGULAR = "Regular";
+        public static final String MEDIUM = "Medium";
+        public static final String HIGH = "High";
     }
 
     public static final class StatusCodes {
@@ -88,6 +98,27 @@ public final class Constants {
     public static final String PACKAGE = "com.example";
 
     public static final int DEFAULT_CONNECTION_TIMEOUT = 120 * 1000;
+
+
+    public static final String SHORT_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
+
+    public static final String MEMBERS = "members";
+    public static final String TIMEZONE_GMT = "GMT";
+
+    public static final class Sorting {
+        public static final String CREATION_DATE_ASC = "creationDate asc";
+        public static final String NAME_DESC = "name desc";
+        public static final String NAME_ASC = "name asc";
+        public static final String MODIFIED_DESC = "modified desc";
+        public static final String MODIFIED_ASC = "modified asc";
+        public static final String PRIORITY_DESC = "priority desc";
+        public static final String PRIORITY_ASC = "priority asc";
+        public static final String DUE_DATE_DESC = "dueDate desc";
+        public static final String SCHEDULED_DESC = "scheduled desc";
+        public static final String SCHEDULED_ASC = "scheduled asc";
+        public static final String DEFAULT_SORTING = "creationDate desc";
+        public static final String ANALYTICS = "analytics"
+    }
 }
 
 

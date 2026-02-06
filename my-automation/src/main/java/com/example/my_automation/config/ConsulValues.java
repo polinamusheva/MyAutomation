@@ -19,7 +19,7 @@ public class ConsulValues {
     @Value("${api.url}")
     private String apiUrl;
 
-    //SFTP values
+    //SFTP values (for files upload/download)
     @Value("${sftp.host}")
     private String sftpHost;
     @Value("${sftp.port}")

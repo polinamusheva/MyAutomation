@@ -1,0 +1,56 @@
+[
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": [
+      "open"
+    ]
+  },
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": [
+      "closed"
+    ]
+  },
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": [
+      "archive"
+    ]
+  },
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuser",
+      "automationuserreadonly",
+      "automationuserreadwrite"
+    ],
+    "status": [
+      "closed",
+      "open",
+      "archive"
+    ]
+  },
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuserreadwrite"
+    ],
+    "status": [
+      "open"
+    ]
+  }
+]

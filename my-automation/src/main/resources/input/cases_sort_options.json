@@ -1,0 +1,142 @@
+[
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "creationDate asc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "name desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "name asc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "modified desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "modified asc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "priority desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "priority asc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "dueDate desc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "dueDate asc",
+    "creators": [
+      "automationuser"
+    ],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "creationDate desc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "creationDate asc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "name desc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "name asc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "modified desc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "modified asc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "priority desc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "priority asc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "dueDate desc",
+    "creators": [],
+    "status": []
+  },
+  {
+    "name": "",
+    "sort": "dueDate asc",
+    "creators": [],
+    "status": []
+  }
+]

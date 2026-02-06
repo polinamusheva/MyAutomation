@@ -1,4 +1,4 @@
-package com.example.my_automation.apis;
+package com.example.my_automation.clients;
 
 import com.example.my_automation.constants.Constants;
 import com.example.my_automation.utils.RequestSpecifications;

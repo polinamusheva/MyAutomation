@@ -1,4 +1,4 @@
-package com.example.my_automation.apis;
+package com.example.my_automation.clients;
 
 import com.example.my_automation.builder.RequestBuilder;
 import com.example.my_automation.dto.BaseRequestDto;
@@ -92,7 +92,7 @@ public class ProjectsServiceClient extends MyAppApiClient {
         return response;
     }
 
-    public Response getActorTypes(BaseRequestDto baseRequestDto) {
+    public Response getProjectypes(BaseRequestDto baseRequestDto) {
         log.info("Get All Projects for searchIDs: {}", baseRequestDto.getSearchIDs());
         log.debug("Make POST request to: {}:{}{}{}", baseURI, port, basePath, SEARCH_ALL_PROJECTS_PATH);
         String authToken = getAuthToken();
