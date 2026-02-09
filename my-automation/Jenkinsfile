@@ -1,0 +1,156 @@
+@Library('jenkins-shared-library@new-jenkins') _
+
+def CONSUL_HOSTS = [
+        'Dublin' : '10.164.20.223',
+        'Sydney' : '172.16.45.16',
+        'Jakarta': '10.201.64.43'
+    ]
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+   triggers {
+       cron('@midnight')
+   }
+    parameters {
+        choice(
+            name: 'ENVIRONMENT_UNDER_TEST',
+            choices: ['Dublin','Sydney', 'Jakarta'],
+            description: 'Select environment under test')
+
+        choice(
+            name: 'TEST_SUITE',
+            choices: ['Orbis10_allTests', 'RunAll', 'Discovery', 'Actors', 'Activities', 'Artifacts', 'UsersAndLogIn', 'Cases', 'Notifications', 'CRs'],
+            description: 'Select test suite to run')
+
+        text(
+            name: 'EMAILS',
+            description: 'List email addresses that will receive a report after the execution of the tests',
+            defaultValue: 'Georgi.Zahariev@cognyte.com\nPolina.Musheva@cognyte.com\n')
+    }
+
+    options {
+            // Disallow concurrent executions of the Pipeline. Can be useful
+            // for preventing simultaneous accesses to shared resources, etc.
+            disableConcurrentBuilds()
+    }
+
+    environment {
+            IMAGE_NAME = "orbis-automated-tests"
+            SPECIFIC_MAJOR_VERSION = "${WEBINT_MAJOR_VERSION}"
+            SPECIFIC_MINOR_VERSION = "${WEBINT_MINOR_VERSION}"
+            SPECIFIC_SPRINT = "${WEBINT_SPRINT}"
+            SPECIFIC_BUILD_NUMBER = "${BUILD_NUMBER}"
+            VERSION = "${SPECIFIC_MAJOR_VERSION}.${SPECIFIC_MINOR_VERSION}.${SPECIFIC_SPRINT}.${SPECIFIC_BUILD_NUMBER}"
+            GIT_COMMIT = "${GIT_COMMIT}"
+            GIT_COMMIT_SHORT = "${GIT_COMMIT.take(6)}"
+            GIT_BRANCH = "${GIT_BRANCH}"
+            JIRA_TICKET = "${GIT_BRANCH.replaceAll("[^0-9]", "")}"
+            IMAGE_NAME_SUFFIX = "${JIRA_TICKET ? "-${JIRA_TICKET}" : "-master"}"
+            no_proxy               = "${env.JENKINS_URL == 'http://webint-ci01:8066/' ? '' : "${NO_PROXY}"}"
+            PROXY_URL              = "${env.JENKINS_URL == 'http://webint-ci01:8066/' ? '' : 'http://localhost:8888'}"
+            HTTPS_PROXY            = "${PROXY_URL}"
+            HTTP_PROXY             = "${PROXY_URL}"
+            https_proxy            = "${PROXY_URL}"
+            http_proxy             = "${PROXY_URL}"
+		    proxy_args             = "--build-arg HTTP_PROXY=${PROXY} --build-arg http_proxy=${PROXY} --build-arg HTTPS_PROXY=${PROXY} --build-arg https_proxy=${PROXY} --build-arg NO_PROXY=${env.no_proxy} --build-arg no_proxy=${env.no_proxy}"
+    }
+
+
+    stages {
+        stage('Set CONSUL_HOST') {
+                steps {
+                    script {
+                        env.CONSUL_HOST = CONSUL_HOSTS[params.ENVIRONMENT_UNDER_TEST]
+                        echo "Using CONSUL_HOST: ${env.CONSUL_HOST}"
+                    }
+                }
+            }
+
+        stage('Set build name') {
+            steps {
+                script {
+                    currentBuild.displayName = "#${BUILD_NUMBER} - ${params.ENVIRONMENT_UNDER_TEST} - Suite: ${params.TEST_SUITE}"
+                }
+            }
+        }
+
+        stage('Copy Archive') {
+            steps {
+                script {
+                    step([$class     : 'CopyArtifact',
+                          projectName: 'util_Get_CI_Scripts',
+                          filter     : "scripts/createVersionManifest.sh",
+                          target     : "$WORKSPACE"]);
+                    sh """
+                        chmod +x "$WORKSPACE/scripts/createVersionManifest.sh"
+
+                        Version=$SPECIFIC_MAJOR_VERSION.$SPECIFIC_MINOR_VERSION.$SPECIFIC_SPRINT.$SPECIFIC_BUILD_NUMBER
+
+                        bash -xe "$WORKSPACE/scripts/createVersionManifest.sh" $Version
+                    """
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    if (env.JENKINS_URL != "http://webint-ci01:8066/"){
+                        gradleProxy()
+                    }
+                    sh """
+                    docker build --no-cache \
+                    --label Version=\"${env.VERSION}\" \
+                    --build-arg GIT_COMMIT_ID=\"$GIT_COMMIT\" \
+                    --build-arg GIT_COMMIT_ID_SHORT=\"$GIT_COMMIT_SHORT\" \
+                    --build-arg GIT_BRANCH=\"$GIT_BRANCH\" \
+                    --build-arg SPECIFIC_MAJOR_VERSION=\"$SPECIFIC_MAJOR_VERSION\" \
+                    --build-arg SPECIFIC_MINOR_VERSION=\"$SPECIFIC_MINOR_VERSION\" \
+                    --build-arg BUILD_NUMBER=\"$SPECIFIC_BUILD_NUMBER\" \
+                    --label Git-Commit-Id-Short=\"$GIT_COMMIT_SHORT\" \
+                    --label Git-Commit-Id-Full=\"$GIT_COMMIT\" \
+                    --label Git-Commit-Branch-Name=\"$GIT_BRANCH\" \
+                    --tag ${NEXUS_DOCKER_REGISTRY}:${NEXUS_DOCKER_PUSH_PORT}/${IMAGE_NAME}:${env.VERSION} \
+                    --tag ${NEXUS_DOCKER_REGISTRY}:${NEXUS_DOCKER_PUSH_PORT}/${IMAGE_NAME}:latest \
+                    --tag ${NEXUS_DOCKER_REGISTRY}/${IMAGE_NAME}:${dockerImageVersion()} ${proxy_args} .
+                    """
+                }
+            }
+        }
+
+        stage('Run Tests and Get Results') {
+            steps {
+                script {
+                    gradleProxy()
+                    sh """
+                        docker build --target=jar-getter -t ${IMAGE_NAME}-jar-${BUILD_NUMBER} ${proxy_args} .
+                        docker run -dit --rm --name=${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX} ${IMAGE_NAME}-jar-${BUILD_NUMBER} sh
+                        docker cp ${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX}:/${IMAGE_NAME}/libs/orbis-automated-tests.jar .
+                        docker exec ${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX} /bin/sh -c 'java -Dconsul_host=${env.CONSUL_HOST} -jar ${IMAGE_NAME}/build/libs/orbis-automated-tests.jar ${params.TEST_SUITE}'
+                        docker cp ${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX}:/home/gradle/test-output/testng-results.xml .
+                        docker cp ${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX}:/home/gradle/test-output/emailable-report.html .
+                        docker stop ${IMAGE_NAME}-jar-${BUILD_NUMBER}${IMAGE_NAME_SUFFIX}
+
+                    """
+                    step([$class: 'Publisher', reportFilenamePattern: 'testng-results.xml'])
+                }
+            }
+        }
+
+        stage('Send Mail') {
+            steps {
+                script {
+                    def emailLines = "${params.EMAILS}"
+                    def emails = emailLines.split().collect { it.trim() }
+                    for (email in emails) {
+                        emailext (to: email, subject: "Automated Tests Report - ${params.ENVIRONMENT_UNDER_TEST} - ${params.TEST_SUITE}", body: readFile("emailable-report.html"), mimeType: 'text/html');
+                    }
+                }
+            }
+        }
+    }
+}
